@@ -1,5 +1,5 @@
 export default function buildSearchEngine(docs) {
-    const search = (req) => {
+    const simpleSearch = (req) => {
         const inside = docs.filter((item) => item.indexOf(req) !== -1);
         return inside.map((item) => {
             let includesInDoc = {
@@ -14,7 +14,18 @@ export default function buildSearchEngine(docs) {
             return includesInDoc;
         });
     };
+
+    const normalizationSearch = (req) => {
+        const token = req;
+        const re = /\w+/g;
+        const term = token.match(re);
+        return simpleSearch(term.join(" "));
+    };
+
     return {
-        search
-    }
+        search: {
+            ss: simpleSearch(),
+            ns: normalizationSearch()
+        }
+    };
 }
